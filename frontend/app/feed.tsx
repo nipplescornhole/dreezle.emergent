@@ -216,8 +216,20 @@ export default function FeedScreen() {
         style={styles.overlay}
       />
 
-      {/* Background Image */}
-      {item.cover_image ? (
+      {/* Background Media */}
+      {item.content_type === 'video' && item.video_data ? (
+        // Video content - for web we'll use a placeholder since video needs special handling
+        <View style={styles.backgroundImage}>
+          <LinearGradient
+            colors={['#ff6b9d', '#c770f0', '#45d4aa']}
+            style={styles.backgroundImage}
+          />
+          <View style={styles.videoPlaceholder}>
+            <Ionicons name="videocam" size={80} color="white" />
+            <Text style={styles.videoPlaceholderText}>Video Content</Text>
+          </View>
+        </View>
+      ) : item.cover_image ? (
         <Image
           source={{ uri: `data:image/jpeg;base64,${item.cover_image}` }}
           style={styles.backgroundImage}
@@ -232,6 +244,16 @@ export default function FeedScreen() {
 
       {/* Content Info */}
       <View style={styles.contentInfo}>
+        <View style={styles.contentTypeIndicator}>
+          <Ionicons
+            name={item.content_type === 'video' ? 'videocam' : 'musical-notes'}
+            size={16}
+            color="white"
+          />
+          <Text style={styles.contentTypeText}>
+            {item.content_type.toUpperCase()}
+          </Text>
+        </View>
         <Text style={styles.contentTitle}>{item.title}</Text>
         {item.description && (
           <Text style={styles.contentDescription}>{item.description}</Text>
