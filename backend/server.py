@@ -216,11 +216,19 @@ async def create_content(content_data: ContentCreate, current_user: User = Depen
     if current_user.role not in ["creator", "expert", "label"]:
         raise HTTPException(status_code=403, detail="Only creators can upload content")
     
+    # Validate content type and data
+    if content_data.content_type == "audio" and not content_data.audio_data:
+        raise HTTPException(status_code=400, detail="Audio data is required for audio content")
+    elif content_data.content_type == "video" and not content_data.video_data:
+        raise HTTPException(status_code=400, detail="Video data is required for video content")
+    
     content_dict = {
         "user_id": current_user.id,
         "title": content_data.title,
         "description": content_data.description,
+        "content_type": content_data.content_type,
         "audio_data": content_data.audio_data,
+        "video_data": content_data.video_data,
         "cover_image": content_data.cover_image,
         "duration": content_data.duration,
         "likes_count": 0,
@@ -236,7 +244,9 @@ async def create_content(content_data: ContentCreate, current_user: User = Depen
         user_id=current_user.id,
         title=content_data.title,
         description=content_data.description,
+        content_type=content_data.content_type,
         audio_data=content_data.audio_data,
+        video_data=content_data.video_data,
         cover_image=content_data.cover_image,
         duration=content_data.duration,
         likes_count=0,
