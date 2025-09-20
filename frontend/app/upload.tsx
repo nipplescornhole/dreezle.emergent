@@ -25,7 +25,9 @@ export default function UploadScreen() {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [contentType, setContentType] = useState<'audio' | 'video'>('audio');
   const [audioFile, setAudioFile] = useState<string | null>(null);
+  const [videoFile, setVideoFile] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
 
@@ -60,6 +62,29 @@ export default function UploadScreen() {
     }
   };
 
+  const pickVideo = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
+        quality: 0.8,
+        duration: 60, // Max 60 seconds
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        const asset = result.assets[0];
+        // Convert to base64 (simplified for demo - in real app you'd handle this differently)
+        const base64Video = await fileToBase64(asset.uri);
+        setVideoFile(base64Video);
+        setDuration(asset.duration || null);
+        Alert.alert('Success', 'Video file selected!');
+      }
+    } catch (error) {
+      console.error('Video picker error:', error);
+      Alert.alert('Error', 'Failed to pick video file');
+    }
+  };
+
   const pickCoverImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -83,7 +108,7 @@ export default function UploadScreen() {
   const fileToBase64 = async (uri: string): Promise<string> => {
     // This is a simplified conversion for demo purposes
     // In a real app, you'd use proper file reading methods
-    return 'demo-base64-audio-data';
+    return 'demo-base64-file-data';
   };
 
   const handleUpload = async () => {
@@ -92,8 +117,13 @@ export default function UploadScreen() {
       return;
     }
 
-    if (!audioFile) {
+    if (contentType === 'audio' && !audioFile) {
       Alert.alert('Error', 'Please select an audio file');
+      return;
+    }
+
+    if (contentType === 'video' && !videoFile) {
+      Alert.alert('Error', 'Please select a video file');
       return;
     }
 
@@ -110,7 +140,9 @@ export default function UploadScreen() {
       const uploadData = {
         title: title.trim(),
         description: description.trim() || null,
-        audio_data: audioFile,
+        content_type: contentType,
+        audio_data: contentType === 'audio' ? audioFile : null,
+        video_data: contentType === 'video' ? videoFile : null,
         cover_image: coverImage,
         duration: duration,
       };
@@ -127,7 +159,7 @@ export default function UploadScreen() {
       if (response.ok) {
         Alert.alert(
           'Success!',
-          'Your content has been uploaded successfully!',
+          `Your ${contentType} content has been uploaded successfully!`,
           [{ text: 'OK', onPress: () => router.push('/feed') }]
         );
         
@@ -135,6 +167,7 @@ export default function UploadScreen() {
         setTitle('');
         setDescription('');
         setAudioFile(null);
+        setVideoFile(null);
         setCoverImage(null);
         setDuration(null);
       } else {
@@ -148,6 +181,208 @@ export default function UploadScreen() {
       setLoading(false);
     }
   };
+
+  const isFormValid = title.trim() && ((contentType === 'audio' && audioFile) || (contentType === 'video' && videoFile));
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <LinearGradient
+        colors={['#0a0a0a', '#1a0a1a', '#2a0a2a']}
+        style={styles.gradient}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoid}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </TouchableOpacity>
+
+              <Text style={styles.title}>Upload Content</Text>
+
+              <TouchableOpacity
+                style={[styles.uploadButton, !isFormValid && styles.uploadButtonDisabled]}
+                onPress={handleUpload}
+                disabled={loading || !isFormValid}
+              >
+                <Text style={[styles.uploadButtonText, !isFormValid && styles.uploadButtonTextDisabled]}>
+                  {loading ? 'Uploading...' : 'Post'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Content Type Selector */}
+            <View style={styles.contentTypeContainer}>
+              <Text style={styles.sectionTitle}>Content Type</Text>
+              <View style={styles.typeSelector}>
+                <TouchableOpacity
+                  style={[styles.typeOption, contentType === 'audio' && styles.typeOptionSelected]}
+                  onPress={() => setContentType('audio')}
+                >
+                  <Ionicons
+                    name="musical-notes"
+                    size={24}
+                    color={contentType === 'audio' ? '#ff6b9d' : '#666'}
+                  />
+                  <Text style={[styles.typeText, contentType === 'audio' && styles.typeTextSelected]}>
+                    Audio
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.typeOption, contentType === 'video' && styles.typeOptionSelected]}
+                  onPress={() => setContentType('video')}
+                >
+                  <Ionicons
+                    name="videocam"
+                    size={24}
+                    color={contentType === 'video' ? '#ff6b9d' : '#666'}
+                  />
+                  <Text style={[styles.typeText, contentType === 'video' && styles.typeTextSelected]}>
+                    Video
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Form */}
+            <View style={styles.formContainer}>
+              {/* Title Input */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Title *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder={`Give your ${contentType} a catchy title...`}
+                  placeholderTextColor="#666"
+                  value={title}
+                  onChangeText={setTitle}
+                  maxLength={100}
+                />
+                <Text style={styles.charCount}>{title.length}/100</Text>
+              </View>
+
+              {/* Description Input */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Description</Text>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  placeholder={`Tell us about your ${contentType}...`}
+                  placeholderTextColor="#666"
+                  value={description}
+                  onChangeText={setDescription}
+                  multiline
+                  numberOfLines={4}
+                  maxLength={500}
+                />
+                <Text style={styles.charCount}>{description.length}/500</Text>
+              </View>
+
+              {/* Media Upload */}
+              <View style={styles.uploadSection}>
+                <Text style={styles.sectionTitle}>
+                  {contentType === 'audio' ? 'Audio File *' : 'Video File *'}
+                </Text>
+                <TouchableOpacity
+                  style={[styles.uploadCard, (audioFile || videoFile) && styles.uploadCardSelected]}
+                  onPress={contentType === 'audio' ? pickAudio : pickVideo}
+                >
+                  <Ionicons
+                    name={
+                      (audioFile || videoFile)
+                        ? "checkmark-circle"
+                        : contentType === 'audio'
+                        ? "musical-notes"
+                        : "videocam"
+                    }
+                    size={40}
+                    color={(audioFile || videoFile) ? "#45d4aa" : "#666"}
+                  />
+                  <Text style={[styles.uploadCardText, (audioFile || videoFile) && styles.uploadCardTextSelected]}>
+                    {(audioFile || videoFile)
+                      ? `${contentType.charAt(0).toUpperCase() + contentType.slice(1)} file selected`
+                      : `Select ${contentType} file`
+                    }
+                  </Text>
+                  <Text style={styles.uploadCardSubtext}>
+                    {contentType === 'audio'
+                      ? 'MP3, WAV, AAC supported'
+                      : 'MP4, MOV supported (max 60s)'
+                    }
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Cover Image Upload */}
+              <View style={styles.uploadSection}>
+                <Text style={styles.sectionTitle}>Cover Image</Text>
+                <TouchableOpacity
+                  style={[styles.uploadCard, coverImage && styles.uploadCardSelected]}
+                  onPress={pickCoverImage}
+                >
+                  {coverImage ? (
+                    <View style={styles.imagePreview}>
+                      <Image
+                        source={{ uri: `data:image/jpeg;base64,${coverImage}` }}
+                        style={styles.previewImage}
+                      />
+                      <Text style={[styles.uploadCardText, styles.uploadCardTextSelected]}>
+                        Cover image selected
+                      </Text>
+                    </View>
+                  ) : (
+                    <>
+                      <Ionicons name="image" size={40} color="#666" />
+                      <Text style={styles.uploadCardText}>
+                        Add cover image
+                      </Text>
+                      <Text style={styles.uploadCardSubtext}>
+                        {contentType === 'video' ? 'Optional - video thumbnail will be used if not provided' : 'Square images work best'}
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
+
+              {/* Guidelines */}
+              <View style={styles.guidelinesContainer}>
+                <Text style={styles.guidelinesTitle}>Upload Guidelines</Text>
+                <View style={styles.guideline}>
+                  <Ionicons name="checkmark" size={16} color="#45d4aa" />
+                  <Text style={styles.guidelineText}>
+                    {contentType === 'audio' ? 'Audio files up to 10MB' : 'Video files up to 50MB (max 60s)'}
+                  </Text>
+                </View>
+                <View style={styles.guideline}>
+                  <Ionicons name="checkmark" size={16} color="#45d4aa" />
+                  <Text style={styles.guidelineText}>Only upload original content</Text>
+                </View>
+                <View style={styles.guideline}>
+                  <Ionicons name="checkmark" size={16} color="#45d4aa" />
+                  <Text style={styles.guidelineText}>Respectful content only</Text>
+                </View>
+                {contentType === 'video' && (
+                  <View style={styles.guideline}>
+                    <Ionicons name="checkmark" size={16} color="#45d4aa" />
+                    <Text style={styles.guidelineText}>Video with integrated audio preferred</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
+    </SafeAreaView>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
