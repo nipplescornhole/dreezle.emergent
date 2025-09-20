@@ -201,10 +201,10 @@ export default function FeedScreen() {
       const newIndex = viewableItems[0].index;
       setCurrentIndex(newIndex);
 
-      // Auto-play audio for current item
+      // Auto-play media for current item
       const currentContent = contents[newIndex];
-      if (currentContent && currentContent.audio_data) {
-        playAudio(currentContent.audio_data);
+      if (currentContent && (currentContent.audio_data || currentContent.video_data)) {
+        playMedia(currentContent);
       }
     }
   };
