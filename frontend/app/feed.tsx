@@ -115,29 +115,34 @@ export default function FeedScreen() {
     }
   };
 
-  const playAudio = async (audioData: string) => {
+  const playMedia = async (content: Content) => {
     try {
       if (sound) {
         await sound.unloadAsync();
       }
 
-      // Convert base64 to audio URI (simplified for demo)
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        { uri: `data:audio/mp3;base64,${audioData}` },
-        { shouldPlay: true, isLooping: true }
-      );
+      if (content.content_type === 'audio' && content.audio_data) {
+        // Play audio
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          { uri: `data:audio/mp3;base64,${content.audio_data}` },
+          { shouldPlay: true, isLooping: true }
+        );
 
-      setSound(newSound);
-      setIsPlaying(true);
+        setSound(newSound);
+        setIsPlaying(true);
 
-      newSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          setIsPlaying(false);
-        }
-      });
+        newSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.isLoaded && status.didJustFinish) {
+            setIsPlaying(false);
+          }
+        });
+      } else if (content.content_type === 'video' && content.video_data) {
+        // For video, the video component will handle playback
+        setIsPlaying(true);
+      }
     } catch (error) {
-      console.error('Audio play error:', error);
-      Alert.alert('Error', 'Unable to play audio');
+      console.error('Media play error:', error);
+      Alert.alert('Error', 'Unable to play media');
     }
   };
 
