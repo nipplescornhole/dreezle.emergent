@@ -25,7 +25,9 @@ interface Content {
   user_id: string;
   title: string;
   description?: string;
-  audio_data: string;
+  content_type: string;
+  audio_data?: string;
+  video_data?: string;
   cover_image?: string;
   duration?: number;
   likes_count: number;
