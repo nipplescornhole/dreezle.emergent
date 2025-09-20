@@ -68,7 +68,9 @@ class User(BaseModel):
 class ContentCreate(BaseModel):
     title: str
     description: Optional[str] = None
-    audio_data: str  # base64 encoded audio
+    content_type: str = "audio"  # "audio" or "video"
+    audio_data: Optional[str] = None  # base64 encoded audio
+    video_data: Optional[str] = None  # base64 encoded video
     cover_image: Optional[str] = None  # base64 encoded image
     duration: Optional[float] = None
 
@@ -77,7 +79,9 @@ class Content(BaseModel):
     user_id: str
     title: str
     description: Optional[str] = None
-    audio_data: str
+    content_type: str = "audio"  # "audio" or "video"
+    audio_data: Optional[str] = None
+    video_data: Optional[str] = None
     cover_image: Optional[str] = None
     duration: Optional[float] = None
     likes_count: int = 0
