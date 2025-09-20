@@ -435,6 +435,22 @@ const styles = StyleSheet.create({
     right: 80,
     zIndex: 2,
   },
+  contentTypeIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  contentTypeText: {
+    fontSize: 10,
+    color: 'white',
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
   contentTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -450,6 +466,19 @@ const styles = StyleSheet.create({
   contentStats: {
     fontSize: 12,
     color: '#999',
+  },
+  videoPlaceholder: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -40 }, { translateY: -50 }],
+    alignItems: 'center',
+  },
+  videoPlaceholderText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 8,
   },
   actionButtons: {
     position: 'absolute',
