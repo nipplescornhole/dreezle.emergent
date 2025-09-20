@@ -579,6 +579,35 @@ const styles = StyleSheet.create({
   uploadButtonTextDisabled: {
     color: '#666',
   },
+  contentTypeContainer: {
+    marginBottom: 24,
+  },
+  typeSelector: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  typeOption: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  typeOptionSelected: {
+    borderColor: '#ff6b9d',
+    backgroundColor: 'rgba(255, 107, 157, 0.1)',
+  },
+  typeText: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
+    fontWeight: '500',
+  },
+  typeTextSelected: {
+    color: '#ff6b9d',
+  },
   formContainer: {
     flex: 1,
   },
@@ -647,6 +676,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginTop: 4,
+    textAlign: 'center',
   },
   imagePreview: {
     alignItems: 'center',
