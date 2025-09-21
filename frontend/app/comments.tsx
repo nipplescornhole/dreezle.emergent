@@ -342,10 +342,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 4,
   },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flex: 1,
+  },
   commentUsername: {
     fontSize: 14,
     fontWeight: '600',
     color: 'white',
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+  },
+  badgeIcon: {
+    marginRight: 2,
+  },
+  badgeText: {
+    fontWeight: '600',
   },
   commentTime: {
     fontSize: 12,
