@@ -213,7 +213,17 @@ export default function AuthScreen() {
                         onPress={() => setFormData({ ...formData, role: role.value })}
                       >
                         <View style={styles.roleHeader}>
-                          <UserBadge role={role.value} size="small" />
+                          <Ionicons
+                            name={role.icon as any}
+                            size={24}
+                            color={formData.role === role.value ? '#ff6b9d' : '#666'}
+                          />
+                          <Text style={[
+                            styles.roleText,
+                            formData.role === role.value && styles.roleTextSelected,
+                          ]}>
+                            {role.label}
+                          </Text>
                         </View>
                         <Text style={styles.roleDescription}>
                           {role.description}
