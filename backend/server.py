@@ -529,6 +529,241 @@ async def create_label_request(request_data: LabelRequestCreate, current_user: U
         created_at=request_dict["created_at"]
     )
 
+# Admin Routes
+@api_router.get("/admin/stats", response_model=AdminStats)
+async def get_admin_stats(admin_user: User = Depends(require_admin)):
+    # Get total counts
+    total_users = await db.users.count_documents({})
+    total_contents = await db.contents.count_documents({})
+    
+    # Get pending requests
+    pending_expert_requests = await db.users.count_documents({
+        "role": "expert", 
+        "badge_status": "pending"
+    })
+    pending_label_requests = await db.users.count_documents({
+        "role": "label", 
+        "badge_status": "pending"
+    })
+    
+    # Get users by role
+    pipeline = [
+        {"$group": {"_id": "$verified_role", "count": {"$sum": 1}}}
+    ]
+    role_aggregation = await db.users.aggregate(pipeline).to_list(100)
+    users_by_role = {item["_id"]: item["count"] for item in role_aggregation}
+    
+    # Get recent registrations (last 7 days)
+    seven_days_ago = datetime.utcnow() - timedelta(days=7)
+    recent_registrations = await db.users.count_documents({
+        "created_at": {"$gte": seven_days_ago}
+    })
+    
+    return AdminStats(
+        total_users=total_users,
+        total_contents=total_contents,
+        pending_expert_requests=pending_expert_requests,
+        pending_label_requests=pending_label_requests,
+        users_by_role=users_by_role,
+        recent_registrations=recent_registrations
+    )
+
+@api_router.get("/admin/users")
+async def get_all_users(admin_user: User = Depends(require_admin), skip: int = 0, limit: int = 50):
+    users = await db.users.find().skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    
+    result = []
+    for user in users:
+        # Get content count for each user
+        content_count = await db.contents.count_documents({"user_id": str(user["_id"])})
+        
+        result.append(AdminUserDetails(
+            id=str(user["_id"]),
+            email=user["email"],
+            username=user["username"],
+            role=user["role"],
+            verified_role=user.get("verified_role", user["role"]),
+            is_verified=user.get("is_verified", False),
+            badge_status=user.get("badge_status"),
+            created_at=user["created_at"],
+            content_count=content_count,
+            last_active=user.get("last_active")
+        ))
+    
+    return result
+
+@api_router.get("/admin/pending-verifications")
+async def get_pending_verifications(admin_user: User = Depends(require_admin)):
+    # Get expert requests
+    expert_requests = await db.users.find({
+        "role": "expert",
+        "badge_status": "pending",
+        "verification_documents": {"$exists": True}
+    }).to_list(100)
+    
+    # Get label requests  
+    label_requests = await db.users.find({
+        "role": "label",
+        "badge_status": "pending"
+    }).to_list(100)
+    
+    result = {
+        "expert_requests": [],
+        "label_requests": []
+    }
+    
+    for user in expert_requests:
+        result["expert_requests"].append({
+            "id": str(user["_id"]),
+            "email": user["email"],
+            "username": user["username"],
+            "verification_documents": user.get("verification_documents"),
+            "verification_description": user.get("verification_description"),
+            "created_at": user["created_at"],
+            "submitted_at": user.get("updated_at", user["created_at"])
+        })
+    
+    for user in label_requests:
+        result["label_requests"].append({
+            "id": str(user["_id"]),
+            "email": user["email"],
+            "username": user["username"],
+            "created_at": user["created_at"]
+        })
+    
+    return result
+
+@api_router.post("/admin/verify-expert/{user_id}")
+async def verify_expert_request(
+    user_id: str, 
+    decision: VerificationDecision,
+    admin_user: User = Depends(require_admin)
+):
+    user = await db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user["role"] != "expert":
+        raise HTTPException(status_code=400, detail="User is not an expert applicant")
+    
+    if decision.decision == "approve":
+        # Approve expert status
+        await db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$set": {
+                    "verified_role": "expert",
+                    "is_verified": True,
+                    "badge_status": "approved",
+                    "verified_at": datetime.utcnow(),
+                    "verified_by": admin_user.id
+                }
+            }
+        )
+        message = "Expert verification approved"
+    else:
+        # Reject expert status - revert to listener
+        await db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$set": {
+                    "verified_role": "listener",
+                    "is_verified": False,
+                    "badge_status": "rejected",
+                    "rejection_reason": decision.reason,
+                    "rejected_at": datetime.utcnow(),
+                    "rejected_by": admin_user.id
+                }
+            }
+        )
+        message = "Expert verification rejected"
+    
+    return {"message": message, "decision": decision.decision}
+
+@api_router.post("/admin/verify-label/{user_id}")
+async def verify_label_request(
+    user_id: str,
+    decision: VerificationDecision, 
+    admin_user: User = Depends(require_admin)
+):
+    user = await db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user["role"] != "label":
+        raise HTTPException(status_code=400, detail="User is not a label applicant")
+    
+    if decision.decision == "approve":
+        # Approve label status
+        await db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$set": {
+                    "verified_role": "label",
+                    "is_verified": True,
+                    "badge_status": "approved",
+                    "verified_at": datetime.utcnow(),
+                    "verified_by": admin_user.id
+                }
+            }
+        )
+        message = "Label verification approved"
+    else:
+        # Reject label status - revert to listener
+        await db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$set": {
+                    "verified_role": "listener",
+                    "is_verified": False,
+                    "badge_status": "rejected",
+                    "rejection_reason": decision.reason,
+                    "rejected_at": datetime.utcnow(),
+                    "rejected_by": admin_user.id
+                }
+            }
+        )
+        message = "Label verification rejected"
+    
+    return {"message": message, "decision": decision.decision}
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(user_id: str, admin_user: User = Depends(require_admin)):
+    # Prevent admin from deleting themselves
+    if user_id == admin_user.id:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    
+    user = await db.users.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent deleting other admins
+    if user.get("role") == "admin":
+        raise HTTPException(status_code=403, detail="Cannot delete admin users")
+    
+    # Delete user and all related data
+    await db.users.delete_one({"_id": ObjectId(user_id)})
+    await db.contents.delete_many({"user_id": user_id})
+    await db.comments.delete_many({"user_id": user_id})
+    await db.likes.delete_many({"user_id": user_id})
+    await db.saved_contents.delete_many({"user_id": user_id})
+    
+    return {"message": "User deleted successfully"}
+
+@api_router.delete("/admin/contents/{content_id}")
+async def delete_content(content_id: str, admin_user: User = Depends(require_admin)):
+    content = await db.contents.find_one({"_id": ObjectId(content_id)})
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    # Delete content and related data
+    await db.contents.delete_one({"_id": ObjectId(content_id)})
+    await db.comments.delete_many({"content_id": content_id})
+    await db.likes.delete_many({"content_id": content_id})
+    await db.saved_contents.delete_many({"content_id": content_id})
+    
+    return {"message": "Content deleted successfully"}
+
 # Basic Routes
 @api_router.get("/")
 async def root():
