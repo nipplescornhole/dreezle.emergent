@@ -17,23 +17,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrezzleLogo from '../components/DrezzleLogo';
-import { useLanguage, Language } from '../contexts/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
-
-const languages = [
-  { code: 'it' as Language, name: 'Italiano', flag: '🇮🇹' },
-  { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
-  { code: 'de' as Language, name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
-  { code: 'en-US' as Language, name: 'English (US)', flag: '🇺🇸' },
-];
 
 export default function WelcomeScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     checkAuthStatus();
@@ -58,16 +47,6 @@ export default function WelcomeScreen() {
     router.push(`/auth?mode=${mode}`);
   };
 
-  const handleLanguageSelect = (lang: Language) => {
-    setLanguage(lang);
-    setShowLanguageModal(false);
-  };
-
-  const getCurrentLanguageName = () => {
-    const currentLang = languages.find(lang => lang.code === language);
-    return currentLang ? `${currentLang.flag} ${currentLang.name}` : '🇮🇹 Italiano';
-  };
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -84,16 +63,6 @@ export default function WelcomeScreen() {
         colors={['#0a0a0a', '#1a0a1a', '#2a0a2a']}
         style={styles.gradient}
       >
-        {/* Language Selector */}
-        <TouchableOpacity
-          style={styles.languageSelector}
-          onPress={() => setShowLanguageModal(true)}
-        >
-          <Ionicons name="language" size={20} color="white" style={styles.languageIcon} />
-          <Text style={styles.languageText}>{getCurrentLanguageName()}</Text>
-          <Ionicons name="chevron-down" size={16} color="white" />
-        </TouchableOpacity>
-
         <ScrollView 
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -103,32 +72,32 @@ export default function WelcomeScreen() {
             <View style={styles.logoContainer}>
               <DrezzleLogo size="large" />
             </View>
-            <Text style={styles.tagline}>{t('welcome.tagline')}</Text>
+            <Text style={styles.tagline}>Social Music Platform</Text>
           </View>
 
           {/* Hero Section */}
           <View style={styles.heroSection}>
             <View style={styles.featureCard}>
               <Ionicons name="play-circle" size={60} color="#ff6b9d" />
-              <Text style={styles.featureTitle}>{t('welcome.discover.title')}</Text>
+              <Text style={styles.featureTitle}>Discover Music</Text>
               <Text style={styles.featureDescription}>
-                {t('welcome.discover.description')}
+                Swipe through endless musical content from talented creators
               </Text>
             </View>
 
             <View style={styles.featureCard}>
               <Ionicons name="mic" size={60} color="#c770f0" />
-              <Text style={styles.featureTitle}>{t('welcome.create.title')}</Text>
+              <Text style={styles.featureTitle}>Create & Share</Text>
               <Text style={styles.featureDescription}>
-                {t('welcome.create.description')}
+                Upload your music and reach millions of listeners worldwide
               </Text>
             </View>
 
             <View style={styles.featureCard}>
               <Ionicons name="people" size={60} color="#45d4aa" />
-              <Text style={styles.featureTitle}>{t('welcome.connect.title')}</Text>
+              <Text style={styles.featureTitle}>Connect</Text>
               <Text style={styles.featureDescription}>
-                {t('welcome.connect.description')}
+                Engage with artists, like, comment, and build your music community
               </Text>
             </View>
           </View>
@@ -144,7 +113,7 @@ export default function WelcomeScreen() {
                 colors={['#ff6b9d', '#c770f0']}
                 style={styles.buttonGradient}
               >
-                <Text style={styles.buttonText}>{t('welcome.signin')}</Text>
+                <Text style={styles.buttonText}>Sign In</Text>
                 <Ionicons name="arrow-forward" size={20} color="white" />
               </LinearGradient>
             </TouchableOpacity>
@@ -154,7 +123,7 @@ export default function WelcomeScreen() {
               onPress={() => navigateToAuth('register')}
               activeOpacity={0.8}
             >
-              <Text style={styles.registerButtonText}>{t('welcome.signup')}</Text>
+              <Text style={styles.registerButtonText}>Create Account</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -162,14 +131,14 @@ export default function WelcomeScreen() {
               onPress={() => router.push('/feed')}
               activeOpacity={0.8}
             >
-              <Text style={styles.guestButtonText}>{t('welcome.guest')}</Text>
+              <Text style={styles.guestButtonText}>Continue as Guest</Text>
             </TouchableOpacity>
           </View>
 
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>
-              {t('welcome.footer')}
+              Join thousands of music lovers and creators
             </Text>
             <View style={styles.socialIcons}>
               <Ionicons name="logo-instagram" size={24} color="#666" />
@@ -178,52 +147,6 @@ export default function WelcomeScreen() {
             </View>
           </View>
         </ScrollView>
-
-        {/* Language Selection Modal */}
-        <Modal
-          visible={showLanguageModal}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setShowLanguageModal(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>{t('welcome.language')}</Text>
-                <TouchableOpacity
-                  style={styles.modalCloseButton}
-                  onPress={() => setShowLanguageModal(false)}
-                >
-                  <Ionicons name="close" size={24} color="white" />
-                </TouchableOpacity>
-              </View>
-              
-              <View style={styles.languagesList}>
-                {languages.map((lang) => (
-                  <TouchableOpacity
-                    key={lang.code}
-                    style={[
-                      styles.languageOption,
-                      language === lang.code && styles.languageOptionSelected,
-                    ]}
-                    onPress={() => handleLanguageSelect(lang.code)}
-                  >
-                    <Text style={styles.languageFlag}>{lang.flag}</Text>
-                    <Text style={[
-                      styles.languageOptionText,
-                      language === lang.code && styles.languageOptionTextSelected,
-                    ]}>
-                      {lang.name}
-                    </Text>
-                    {language === lang.code && (
-                      <Ionicons name="checkmark" size={20} color="#ff6b9d" />
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </View>
-        </Modal>
       </LinearGradient>
     </SafeAreaView>
   );
