@@ -61,8 +61,20 @@ class User(BaseModel):
     email: str
     username: str
     role: str
+    verified_role: str  # Il ruolo effettivamente verificato
     is_verified: bool = False
     badge_status: Optional[str] = None  # pending, approved, rejected
+    verification_documents: Optional[str] = None  # Base64 dei documenti per expert
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class VerificationRequest(BaseModel):
+    documents: str  # Base64 encoded documents
+    description: str  # Descrizione degli studi/qualifiche
+
+class SavedContent(BaseModel):
+    id: str
+    user_id: str
+    content_id: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class ContentCreate(BaseModel):
