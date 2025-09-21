@@ -233,6 +233,74 @@ async def login(user_data: UserLogin):
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
 
+# Expert Verification Routes
+@api_router.post("/auth/verify-expert")
+async def submit_expert_verification(verification: VerificationRequest, current_user: User = Depends(get_current_user)):
+    if current_user.role != "expert":
+        raise HTTPException(status_code=403, detail="Only expert applicants can submit verification")
+    
+    # Update user with verification documents
+    await db.users.update_one(
+        {"_id": ObjectId(current_user.id)},
+        {
+            "$set": {
+                "verification_documents": verification.documents,
+                "verification_description": verification.description,
+                "badge_status": "pending"
+            }
+        }
+    )
+    
+    return {"message": "Verification documents submitted successfully"}
+
+# Content Save/Unsave Routes
+@api_router.post("/contents/{content_id}/save")
+async def save_content(content_id: str, current_user: User = Depends(get_current_user)):
+    # Check if content exists
+    content = await db.contents.find_one({"_id": ObjectId(content_id)})
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    # Check if already saved
+    existing_save = await db.saved_contents.find_one({"content_id": content_id, "user_id": current_user.id})
+    if existing_save:
+        # Unsave
+        await db.saved_contents.delete_one({"content_id": content_id, "user_id": current_user.id})
+        return {"message": "Content unsaved", "saved": False}
+    else:
+        # Save
+        await db.saved_contents.insert_one({
+            "content_id": content_id,
+            "user_id": current_user.id,
+            "created_at": datetime.utcnow()
+        })
+        return {"message": "Content saved", "saved": True}
+
+@api_router.get("/saved-contents")
+async def get_saved_contents(current_user: User = Depends(get_current_user), skip: int = 0, limit: int = 20):
+    saved_items = await db.saved_contents.find({"user_id": current_user.id}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    
+    result = []
+    for saved_item in saved_items:
+        content = await db.contents.find_one({"_id": ObjectId(saved_item["content_id"])})
+        if content:
+            result.append(Content(
+                id=str(content["_id"]),
+                user_id=content["user_id"],
+                title=content["title"],
+                description=content.get("description"),
+                content_type=content.get("content_type", "audio"),
+                audio_data=content.get("audio_data"),
+                video_data=content.get("video_data"),
+                cover_image=content.get("cover_image"),
+                duration=content.get("duration"),
+                likes_count=content.get("likes_count", 0),
+                comments_count=content.get("comments_count", 0),
+                created_at=content["created_at"]
+            ))
+    
+    return result
+
 # Content Routes
 @api_router.post("/contents", response_model=Content)
 async def create_content(content_data: ContentCreate, current_user: User = Depends(get_current_user)):
