@@ -281,7 +281,7 @@ export default function FeedScreen() {
     }
   };
 
-  const onViewableItemsChanged = ({ viewableItems }: any) => {
+  const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const newIndex = viewableItems[0].index;
       setCurrentIndex(newIndex);
@@ -292,7 +292,7 @@ export default function FeedScreen() {
         playMedia(currentContent);
       }
     }
-  };
+  }, [contents]);
 
   const renderContentItem = ({ item, index }: { item: Content; index: number }) => (
     <View style={styles.contentContainer}>
