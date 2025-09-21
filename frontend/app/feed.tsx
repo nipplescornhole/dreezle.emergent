@@ -321,7 +321,7 @@ export default function FeedScreen() {
           <Ionicons name="person" size={24} color="white" />
         </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Drezzle</Text>
+        <DrezzleLogo size="small" />
 
         <TouchableOpacity
           style={styles.headerButton}
