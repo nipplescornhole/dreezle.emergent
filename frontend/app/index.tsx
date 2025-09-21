@@ -125,7 +125,7 @@ export default function WelcomeScreen() {
                 colors={['#ff6b9d', '#c770f0']}
                 style={styles.buttonGradient}
               >
-                <Text style={styles.buttonText}>Sign In</Text>
+                <Text style={styles.buttonText}>{t('welcome.signin')}</Text>
                 <Ionicons name="arrow-forward" size={20} color="white" />
               </LinearGradient>
             </TouchableOpacity>
@@ -135,7 +135,7 @@ export default function WelcomeScreen() {
               onPress={() => navigateToAuth('register')}
               activeOpacity={0.8}
             >
-              <Text style={styles.registerButtonText}>Create Account</Text>
+              <Text style={styles.registerButtonText}>{t('welcome.signup')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -143,7 +143,7 @@ export default function WelcomeScreen() {
               onPress={() => router.push('/feed')}
               activeOpacity={0.8}
             >
-              <Text style={styles.guestButtonText}>Continue as Guest</Text>
+              <Text style={styles.guestButtonText}>{t('welcome.guest')}</Text>
             </TouchableOpacity>
           </View>
 
