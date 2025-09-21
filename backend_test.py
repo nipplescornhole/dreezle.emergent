@@ -725,6 +725,12 @@ class DrezzleAPITester:
             self.test_like_functionality,
             self.test_invalid_content_like,
             self.test_comment_functionality,
+            self.test_save_content_functionality,
+            self.test_save_nonexistent_content,
+            self.test_save_unauthorized,
+            self.test_get_saved_contents,
+            self.test_get_saved_contents_unauthorized,
+            self.test_save_with_different_roles,
             self.test_badge_request,
             self.test_label_request,
             self.test_missing_fields
