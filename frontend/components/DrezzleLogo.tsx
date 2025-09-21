@@ -1,7 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Image, StyleSheet, ViewStyle } from 'react-native';
 
 interface DrezzleLogoProps {
   size?: 'small' | 'medium' | 'large' | 'splash';
@@ -9,6 +7,8 @@ interface DrezzleLogoProps {
 }
 
 export default function DrezzleLogo({ size = 'medium', style }: DrezzleLogoProps) {
+  const logoUri = 'https://customer-assets.emergentagent.com/job_android-app-dev-3/artifacts/6oabdye9_ChatGPT%20Image%2021%20set%202025%2C%2017_08_33.png';
+  
   const getSize = () => {
     switch (size) {
       case 'small':
@@ -24,53 +24,13 @@ export default function DrezzleLogo({ size = 'medium', style }: DrezzleLogoProps
     }
   };
 
-  const getFontSize = () => {
-    switch (size) {
-      case 'small':
-        return 20;
-      case 'medium':
-        return 28;
-      case 'large':
-        return 42;
-      case 'splash':
-        return 56;
-      default:
-        return 28;
-    }
-  };
-
-  const getIconSize = () => {
-    switch (size) {
-      case 'small':
-        return 24;
-      case 'medium':
-        return 32;
-      case 'large':
-        return 48;
-      case 'splash':
-        return 64;
-      default:
-        return 32;
-    }
-  };
-
-  const dimensions = getSize();
-
   return (
-    <View style={[styles.container, { width: dimensions.width, height: dimensions.height }, style]}>
-      <LinearGradient
-        colors={['#ff6b9d', '#c770f0']}
-        style={[styles.logoContainer, { width: dimensions.width, height: dimensions.height }]}
-      >
-        <View style={styles.logoContent}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="musical-notes" size={getIconSize()} color="white" />
-          </View>
-          <Text style={[styles.logoText, { fontSize: getFontSize() }]}>
-            Drezzle
-          </Text>
-        </View>
-      </LinearGradient>
+    <View style={[styles.container, style]}>
+      <Image
+        source={{ uri: logoUri }}
+        style={[getSize(), styles.logo]}
+        resizeMode="contain"
+      />
     </View>
   );
 }
@@ -80,29 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoContainer: {
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#ff6b9d',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  logoContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  iconContainer: {
-    marginRight: 8,
-  },
-  logoText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+  logo: {
+    // Mantiene le proporzioni dell'immagine
   },
 });
