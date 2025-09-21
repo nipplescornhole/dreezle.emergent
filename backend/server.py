@@ -304,8 +304,9 @@ async def get_saved_contents(current_user: User = Depends(get_current_user), ski
 # Content Routes
 @api_router.post("/contents", response_model=Content)
 async def create_content(content_data: ContentCreate, current_user: User = Depends(get_current_user)):
-    if current_user.role not in ["creator", "expert", "label"]:
-        raise HTTPException(status_code=403, detail="Only creators can upload content")
+    # Check if user can upload based on verified role
+    if current_user.verified_role not in ["creator"]:
+        raise HTTPException(status_code=403, detail="Only verified creators can upload content")
     
     # Validate content type and data
     if content_data.content_type == "audio" and not content_data.audio_data:
@@ -315,6 +316,8 @@ async def create_content(content_data: ContentCreate, current_user: User = Depen
     
     content_dict = {
         "user_id": current_user.id,
+        "username": current_user.username,
+        "user_role": current_user.verified_role,
         "title": content_data.title,
         "description": content_data.description,
         "content_type": content_data.content_type,
