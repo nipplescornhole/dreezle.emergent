@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import DrezzleLogo from '../components/DrezzleLogo';
-import { LanguageProvider } from '../contexts/LanguageContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -43,17 +42,15 @@ export default function RootLayout() {
   }
 
   return (
-    <LanguageProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="feed" />
-        <Stack.Screen name="upload" />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="comments" />
-        <Stack.Screen name="admin" />
-      </Stack>
-    </LanguageProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="auth" />
+      <Stack.Screen name="feed" />
+      <Stack.Screen name="upload" />
+      <Stack.Screen name="profile" />
+      <Stack.Screen name="comments" />
+      <Stack.Screen name="admin" />
+    </Stack>
   );
 }
 
