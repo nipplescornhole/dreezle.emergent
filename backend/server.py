@@ -170,8 +170,10 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         email=user["email"],
         username=user["username"],
         role=user["role"],
+        verified_role=user.get("verified_role", user["role"]),
         is_verified=user.get("is_verified", False),
         badge_status=user.get("badge_status"),
+        verification_documents=user.get("verification_documents"),
         created_at=user["created_at"]
     )
 
