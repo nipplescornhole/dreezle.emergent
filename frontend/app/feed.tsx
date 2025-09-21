@@ -55,6 +55,46 @@ export default function FeedScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
+  // Helper function for role badge
+  const getBadgeConfig = (role: string) => {
+    switch (role?.toLowerCase()) {
+      case 'listener':
+        return { color: '#6b7280', backgroundColor: 'rgba(107, 114, 128, 0.15)', icon: 'headset', label: 'Listener' };
+      case 'creator':
+        return { color: '#ff6b9d', backgroundColor: 'rgba(255, 107, 157, 0.15)', icon: 'mic', label: 'Creator' };
+      case 'expert':
+        return { color: '#45d4aa', backgroundColor: 'rgba(69, 212, 170, 0.15)', icon: 'star', label: 'Expert' };
+      case 'label':
+        return { color: '#c770f0', backgroundColor: 'rgba(199, 112, 240, 0.15)', icon: 'business', label: 'Label' };
+      default:
+        return { color: '#6b7280', backgroundColor: 'rgba(107, 114, 128, 0.15)', icon: 'person', label: 'User' };
+    }
+  };
+
+  const renderBadge = (role: string, size: 'small' | 'medium' = 'small') => {
+    const config = getBadgeConfig(role);
+    const sizeConfig = size === 'small' 
+      ? { paddingHorizontal: 6, paddingVertical: 2, fontSize: 10, iconSize: 12 }
+      : { paddingHorizontal: 8, paddingVertical: 4, fontSize: 12, iconSize: 14 };
+
+    return (
+      <View style={[
+        styles.badge,
+        {
+          backgroundColor: config.backgroundColor,
+          borderColor: config.color,
+          paddingHorizontal: sizeConfig.paddingHorizontal,
+          paddingVertical: sizeConfig.paddingVertical,
+        }
+      ]}>
+        <Ionicons name={config.icon as any} size={sizeConfig.iconSize} color={config.color} style={styles.badgeIcon} />
+        <Text style={[styles.badgeText, { color: config.color, fontSize: sizeConfig.fontSize }]}>
+          {config.label}
+        </Text>
+      </View>
+    );
+  };
+
   useEffect(() => {
     initializeApp();
     return () => {
