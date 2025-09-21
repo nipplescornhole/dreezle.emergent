@@ -191,13 +191,22 @@ async def register(user_data: UserCreate):
     # Hash password
     hashed_password = hash_password(user_data.password)
     
+    # Determine verified role based on registration choice
+    verified_role = user_data.role
+    if user_data.role == "expert":
+        verified_role = "listener"  # Expert must verify with documents
+    elif user_data.role == "label":
+        verified_role = "label"  # Label starts as label but needs admin approval
+    
     # Create user
     user_dict = {
         "email": user_data.email,
         "username": user_data.username,
         "password": hashed_password,
-        "role": user_data.role,
-        "is_verified": False,
+        "role": user_data.role,  # Desired role
+        "verified_role": verified_role,  # Actual active role
+        "is_verified": user_data.role in ["listener", "creator"],  # These don't need verification
+        "badge_status": "approved" if user_data.role in ["listener", "creator"] else "pending",
         "created_at": datetime.utcnow()
     }
     
