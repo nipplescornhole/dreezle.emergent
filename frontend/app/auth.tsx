@@ -103,12 +103,6 @@ export default function AuthScreen() {
       if (response.ok) {
         await AsyncStorage.setItem('access_token', data.access_token);
         
-        // Navigate directly for admin users to avoid alert issues
-        if (formData.email === 'fabio@drezzle.com') {
-          router.replace('/admin');
-          return;
-        }
-        
         let successMessage = isLogin ? 'Welcome back!' : 'Account created successfully!';
         if (!isLogin && formData.role === 'expert') {
           successMessage += '\nPuoi caricare i documenti di studio più tardi dal profilo.';
