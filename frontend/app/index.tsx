@@ -91,25 +91,25 @@ export default function WelcomeScreen() {
           <View style={styles.heroSection}>
             <View style={styles.featureCard}>
               <Ionicons name="play-circle" size={60} color="#ff6b9d" />
-              <Text style={styles.featureTitle}>Discover Music</Text>
+              <Text style={styles.featureTitle}>{t('welcome.discover.title')}</Text>
               <Text style={styles.featureDescription}>
-                Swipe through endless musical content from talented creators
+                {t('welcome.discover.description')}
               </Text>
             </View>
 
             <View style={styles.featureCard}>
               <Ionicons name="mic" size={60} color="#c770f0" />
-              <Text style={styles.featureTitle}>Create & Share</Text>
+              <Text style={styles.featureTitle}>{t('welcome.create.title')}</Text>
               <Text style={styles.featureDescription}>
-                Upload your music and reach millions of listeners worldwide
+                {t('welcome.create.description')}
               </Text>
             </View>
 
             <View style={styles.featureCard}>
               <Ionicons name="people" size={60} color="#45d4aa" />
-              <Text style={styles.featureTitle}>Connect</Text>
+              <Text style={styles.featureTitle}>{t('welcome.connect.title')}</Text>
               <Text style={styles.featureDescription}>
-                Engage with artists, like, comment, and build your music community
+                {t('welcome.connect.description')}
               </Text>
             </View>
           </View>
