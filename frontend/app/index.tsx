@@ -150,7 +150,7 @@ export default function WelcomeScreen() {
           {/* Footer */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>
-              Join thousands of music lovers and creators
+              {t('welcome.footer')}
             </Text>
             <View style={styles.socialIcons}>
               <Ionicons name="logo-instagram" size={24} color="#666" />
