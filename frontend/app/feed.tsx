@@ -297,6 +297,15 @@ export default function FeedScreen() {
             {item.content_type.toUpperCase()}
           </Text>
         </View>
+        
+        {/* Creator Info with Badge */}
+        <View style={styles.creatorInfo}>
+          <Text style={styles.creatorName}>
+            {item.username || 'Unknown User'}
+          </Text>
+          {item.user_role && renderBadge(item.user_role, 'small')}
+        </View>
+        
         <Text style={styles.contentTitle}>{item.title}</Text>
         {item.description && (
           <Text style={styles.contentDescription}>{item.description}</Text>
