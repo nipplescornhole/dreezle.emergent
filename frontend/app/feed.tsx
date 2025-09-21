@@ -375,8 +375,15 @@ export default function FeedScreen() {
           <Text style={styles.actionText}>{item.comments_count}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
-          <Ionicons name="share" size={32} color="white" />
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => saveContent(item.id)}
+        >
+          <Ionicons 
+            name={savedContents.has(item.id) ? "bookmark" : "bookmark-outline"} 
+            size={32} 
+            color={savedContents.has(item.id) ? "#ff6b9d" : "white"} 
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
