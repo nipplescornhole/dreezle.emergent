@@ -240,6 +240,47 @@ export default function FeedScreen() {
     }
   };
 
+  const saveContent = async (contentId: string) => {
+    if (!currentUser) {
+      Alert.alert('Login Required', 'Please login to save content');
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      const response = await fetch(
+        `${EXPO_PUBLIC_BACKEND_URL}/api/contents/${contentId}/save`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        setSavedContents(prev => {
+          const newSet = new Set(prev);
+          if (result.saved) {
+            newSet.add(contentId);
+          } else {
+            newSet.delete(contentId);
+          }
+          return newSet;
+        });
+        
+        Alert.alert(
+          'Success', 
+          result.saved ? 'Content saved!' : 'Content unsaved!'
+        );
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+      Alert.alert('Error', 'Failed to save content');
+    }
+  };
+
   const onViewableItemsChanged = ({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const newIndex = viewableItems[0].index;
