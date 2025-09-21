@@ -23,6 +23,7 @@ const translations = {
     'welcome.connect.title': 'Connettiti',
     'welcome.connect.description': 'Interagisci con artisti, metti like, commenta e costruisci la tua community musicale',
     'welcome.signin': 'Accedi',
+    'welcome.continue': 'Continua',
     'welcome.signup': 'Crea Account',
     'welcome.guest': 'Continua come Ospite',
     'welcome.footer': 'Unisciti a migliaia di amanti della musica e creatori',
