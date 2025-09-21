@@ -359,22 +359,28 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderRadius: 12,
     padding: 16,
-    alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
+    minHeight: 120,
   },
   roleOptionSelected: {
     borderColor: '#ff6b9d',
     backgroundColor: 'rgba(255, 107, 157, 0.1)',
   },
-  roleText: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 8,
-    fontWeight: '500',
+  roleHeader: {
+    alignItems: 'flex-start',
+    marginBottom: 8,
   },
-  roleTextSelected: {
+  roleDescription: {
+    fontSize: 12,
+    color: '#ccc',
+    lineHeight: 16,
+    marginBottom: 4,
+  },
+  roleNote: {
+    fontSize: 10,
     color: '#ff6b9d',
+    fontStyle: 'italic',
   },
   submitButton: {
     height: 56,
