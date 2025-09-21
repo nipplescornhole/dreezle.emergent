@@ -1,0 +1,86 @@
+<analysis>
+The AI engineer successfully initiated the development of Drezzle, a TikTok-like social music platform for Android using Expo, FastAPI, and MongoDB. Initial setup included basic authentication, content CRUD, and a dark-mode UI. Key features added were multi-media content upload (audio/video with base64 storage), a dynamic logo with splash screen integration and resizing, a comprehensive user role and badge system (Listener, Creator, Expert, Label) with verification flows, and a multi-language selection system. An admin dashboard was also implemented with pre-configured credentials for managing user verifications and app statistics.
+
+Throughout the process, the AI engineer demonstrated iterative development, addressing bugs like missing dependencies (, ) and persistent rendering issues. The recent focus has been on a critical bug where the app's landing/auth page is not rendering, getting stuck on the splash screen. The multi-language system was temporarily removed due to this, and the logo component was also simplified in an attempt to fix it, which the user asked to revert. The current state is that the logo has been restored, and the focus is solely on fixing the landing page issue.
+</analysis>
+
+<product_requirements>
+The user requested a social music platform called Drezzle, similar to TikTok, for Android.
+Key features include:
+- **Core Platform**: TikTok-style vertical feed, content upload (audio/video with cover art), likes, comments, user profiles.
+- **User Roles**: Listener, Creator, Expert, Label, each with specific permissions (e.g., Creator can upload, Listener cannot). Roles are visually indicated by distinct badges with different colors and icons after the username.
+- **Verification System**: Expert and Label roles require admin verification (Expert via musical studies, Label via record label proof). Until approved, Experts default to Listener role, while Labels retain their role but await approval. Admin approval changes  and badge status.
+- **Content**: Initially audio/image, later expanded to include video with integrated audio (max 60 seconds). All media stored as base64.
+- **Authentication**: Traditional email/password authentication.
+- **Design**: Dark mode UI with purple/pink gradient, responsive, fluid animations.
+- **Logo Integration**: A provided logo must be used as a splash screen, replace text Drezzle in headers, and be dynamically resizable. The user later requested a 40% size increase for the logo on the landing and homepages.
+- **Multi-language Support**: Implement a menu on the landing page for selecting between Italian, Spanish, German, English (UK), and American English, with the entire app reflecting the chosen language.
+- **Admin Panel**: A separate web panel for  (password ) to manage user verification (Expert/Label), content moderation, and view analytics (total users, content, pending requests, role distribution).
+</product_requirements>
+
+<key_technical_concepts>
+- **Frontend**: Expo (React Native), Expo Router (file-based routing), React Navigation, , ,  (for video), , , React Context API (for i18n).
+- **Backend**: FastAPI, MongoDB (for data storage), JWT (for authentication).
+- **Data Handling**: Base64 encoding for image/audio/video content, environment variables (EXPO_PUBLIC_API_URL, MONGO_URL).
+- **UI/UX**: Dark mode, responsive design, component-based architecture, Flexbox for layout, custom badge components.
+</key_technical_concepts>
+
+<code_architecture>
+The application follows a full-stack architecture with an Expo frontend, FastAPI backend, and MongoDB database.
+
+**Directory Structure:**
+
+
+-   
+    -   **Summary**: This file contains the FastAPI backend logic. It defines API endpoints for user authentication (registration, login with JWT), content management (upload, fetch, likes, comments), user role management (including verification requests for Expert/Label), and a full admin dashboard with statistics and user verification controls.
+    -   **Changes Made**: Initial implementation included JWT auth, content CRUD. Later extended for video support, detailed user roles (, , ), verification documents, content saving, and role-based upload permissions. Admin endpoints for statistics, user approval/rejection were added, and an initial admin user was programmatically created.
+-   
+    -   **Summary**: The main landing page of the application, displaying the Drezzle logo, Social Music Platform tagline, and navigation options like Sign In and Create Account.
+    -   **Changes Made**: Updated to use the  component instead of text. Temporarily modified to remove  integration due to a bug. Styles for language selection modal removed.
+-   
+    -   **Summary**: Handles user login and registration. Includes options for selecting user roles (Listener, Creator, Expert, Label) during registration, with descriptive text and badge previews.
+    -   **Changes Made**: Integrated detailed role descriptions and badge previews. Temporarily removed  import and usage due to a build error, along with associated styles.
+-   
+    -   **Summary**: Implements the core TikTok-like vertical content feed. Displays user-uploaded media (audio/video), creator info, likes, and comments.
+    -   **Changes Made**: Updated to support video playback, integrated the  in the header, and added inline logic for displaying user badges next to usernames for creators and in comments. Styles updated for new elements.
+-   
+    -   **Summary**: Screen for users to upload content. Allows selection between audio and video, with specific validations.
+    -   **Changes Made**: Extended to support video uploads (using  and ). UI updated with a content type selector.
+-   
+    -   **Summary**: The root layout for the Expo Router application. It configures the navigation stack and wraps the app with necessary providers. Handles the splash screen.
+    -   **Changes Made**: Integrated  for a custom splash screen. Temporarily removed  wrapper to debug a critical app loading issue. Added an admin route.
+-   
+    -   **Summary**: New screen for the admin dashboard, displaying application statistics, pending verification requests for Expert/Label users, and controls for approving/rejecting them.
+    -   **Changes Made**: New file created with a comprehensive admin dashboard UI and associated styles.
+-   
+    -   **Summary**: A reusable React Native component to display the Drezzle logo, supporting different sizes (small, medium, large, splash) and loading the logo from a base64 string.
+    -   **Changes Made**: Initially created to display the logo from a URL (later changed to base64). Dimensions were updated multiple times (initially +40%, then exaggerated for testing, then restored to +40%). Temporarily simplified to a text-only version to debug app loading issues, then reverted.
+-   
+    -   **Summary**: A component for rendering user badges based on their role (Listener, Creator, Expert, Label) with distinct colors and icons.
+    -   **Changes Made**: New file created. The component was briefly removed from  due to an import error, and its logic was later integrated directly into  and comment rendering.
+-   
+    -   **Summary**: Provides an internationalization (i18n) context for the application, managing language selection and providing translated strings.
+    -   **Changes Made**: New file created with ,  hook, and translations for Italian, Spanish, German, English UK/US. Temporarily removed from  wrapper to debug app loading issues.
+-   
+    -   **Summary**: Configuration for Babel, essential for transpiling modern JavaScript/TypeScript for React Native.
+    -   **Changes Made**: Created to fix a build issue related to .
+
+</code_architecture>
+
+<pending_tasks>
+- Reintegrate and fix the multi-language system ().
+- Update the user profile pages to display expert verification status and associated information.
+- Implement the save content functionality for users to save videos/audio to their profile.
+- Integrate the  component formally instead of inline logic in feed and comments.
+</pending_tasks>
+
+<current_work>
+Currently, the application is experiencing a critical bug: the landing page (which includes sign-in and registration options) is not rendering, and the app appears to be stuck on the splash screen. This issue re-emerged despite previous attempts to fix it by temporarily removing the  integration from the main layout and landing page.
+
+The AI engineer's most recent action was to revert an experimental change to  (which had been simplified to a text-only version) back to its original image-based implementation, following a user request not to change unrelated components. The primary focus is now on diagnosing and resolving the persistent issue preventing the landing page from loading, with the understanding that the  might still be a factor or a new, unrelated issue has surfaced. Debugging efforts are centered around why the app is not progressing past the splash screen.
+</current_work>
+
+<optional_next_step>
+Diagnose the persistent issue preventing the landing page from loading after the splash screen.
+</optional_next_step>
+
