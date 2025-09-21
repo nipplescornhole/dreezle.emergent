@@ -36,8 +36,8 @@ export default function WelcomeScreen() {
       const token = await AsyncStorage.getItem('access_token');
       if (token) {
         setIsLoggedIn(true);
-        // Navigate to main feed
-        router.replace('/feed');
+        // Don't auto-redirect - let user see the landing page
+        // router.replace('/feed');
       }
     } catch (error) {
       console.error('Auth check error:', error);
