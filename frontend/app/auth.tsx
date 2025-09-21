@@ -202,7 +202,7 @@ export default function AuthScreen() {
 
               {!isLogin && (
                 <View style={styles.roleContainer}>
-                  <Text style={styles.roleTitle}>Choose your role:</Text>
+                  <Text style={styles.roleTitle}>Scegli il tuo ruolo:</Text>
                   <View style={styles.rolesGrid}>
                     {roles.map((role) => (
                       <TouchableOpacity
@@ -213,21 +213,22 @@ export default function AuthScreen() {
                         ]}
                         onPress={() => setFormData({ ...formData, role: role.value })}
                       >
-                        <Ionicons
-                          name={role.icon as any}
-                          size={24}
-                          color={
-                            formData.role === role.value ? '#ff6b9d' : '#666'
-                          }
-                        />
-                        <Text
-                          style={[
-                            styles.roleText,
-                            formData.role === role.value && styles.roleTextSelected,
-                          ]}
-                        >
-                          {role.label}
+                        <View style={styles.roleHeader}>
+                          <UserBadge role={role.value} size="small" />
+                        </View>
+                        <Text style={styles.roleDescription}>
+                          {role.description}
                         </Text>
+                        {role.value === 'expert' && (
+                          <Text style={styles.roleNote}>
+                            * Richiede verifica documenti
+                          </Text>
+                        )}
+                        {role.value === 'label' && (
+                          <Text style={styles.roleNote}>
+                            * Richiede approvazione admin
+                          </Text>
+                        )}
                       </TouchableOpacity>
                     ))}
                   </View>
