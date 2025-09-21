@@ -225,6 +225,11 @@ export default function AuthScreen() {
                           ]}>
                             {role.label}
                           </Text>
+                          <UserBadge 
+                            role={role.value} 
+                            size="small" 
+                            style={{ marginLeft: 8 }}
+                          />
                         </View>
                         <Text style={styles.roleDescription}>
                           {role.description}
