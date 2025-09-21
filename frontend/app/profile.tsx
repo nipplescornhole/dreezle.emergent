@@ -293,6 +293,17 @@ export default function ProfileScreen() {
               </View>
               <Ionicons name="chevron-forward" size={20} color="#666" />
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionItem}
+              onPress={() => router.push('/saved')}
+            >
+              <View style={styles.actionItemLeft}>
+                <Ionicons name="bookmark" size={24} color="#c770f0" />
+                <Text style={styles.actionItemText}>Saved Content</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#666" />
+            </TouchableOpacity>
           </View>
 
           {/* Settings */}
