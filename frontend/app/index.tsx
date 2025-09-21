@@ -17,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrezzleLogo from '../components/DrezzleLogo';
+import { useLanguage, Language } from '../contexts/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
