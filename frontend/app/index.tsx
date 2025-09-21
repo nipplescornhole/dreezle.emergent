@@ -72,10 +72,19 @@ export default function WelcomeScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.languageButton}
+              onPress={() => setShowLanguageModal(true)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="language" size={20} color="#ff6b9d" />
+              <Text style={styles.languageButtonText}>{t('welcome.language')}</Text>
+            </TouchableOpacity>
+            
             <View style={styles.logoContainer}>
               <DrezzleLogo size="large" />
             </View>
-            <Text style={styles.tagline}>Social Music Platform</Text>
+            <Text style={styles.tagline}>{t('welcome.tagline')}</Text>
           </View>
 
           {/* Hero Section */}
