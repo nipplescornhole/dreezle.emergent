@@ -165,7 +165,10 @@ export default function CommentsScreen() {
 
       <View style={styles.commentContent}>
         <View style={styles.commentHeader}>
-          <Text style={styles.commentUsername}>{item.username}</Text>
+          <View style={styles.userInfo}>
+            <Text style={styles.commentUsername}>{item.username}</Text>
+            {item.user_role && renderBadge(item.user_role, 'small')}
+          </View>
           <Text style={styles.commentTime}>{formatTime(item.created_at)}</Text>
         </View>
         <Text style={styles.commentText}>{item.text}</Text>
