@@ -53,6 +53,7 @@ export default function FeedScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [savedContents, setSavedContents] = useState<Set<string>>(new Set());
   const flatListRef = useRef<FlatList>(null);
 
   // Helper function for role badge
