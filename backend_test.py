@@ -463,6 +463,212 @@ class DrezzleAPITester:
             self.log_test("Create Label Request", False, f"Exception: {str(e)}")
         return False
     
+    def test_save_content_functionality(self):
+        """Test save/unsave content functionality"""
+        print("\n=== Testing Save Content Functionality ===")
+        
+        if not self.contents:
+            self.log_test("Save Content", False, "No content available to test")
+            return False
+        
+        content_id = self.contents[0]
+        success_count = 0
+        
+        # Test saving content with listener
+        if "listener" in self.tokens:
+            try:
+                headers = {"Authorization": f"Bearer {self.tokens['listener']}"}
+                
+                # Save the content (first time)
+                response = requests.post(f"{self.base_url}/contents/{content_id}/save", headers=headers, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get("message") == "Content saved" and data.get("saved") == True:
+                        self.log_test("Save Content", True, "Content saved successfully")
+                        success_count += 1
+                        
+                        # Unsave the content (toggle)
+                        response = requests.post(f"{self.base_url}/contents/{content_id}/save", headers=headers, timeout=10)
+                        if response.status_code == 200:
+                            data = response.json()
+                            if data.get("message") == "Content unsaved" and data.get("saved") == False:
+                                self.log_test("Unsave Content", True, "Content unsaved successfully")
+                                success_count += 1
+                                
+                                # Save again (toggle back)
+                                response = requests.post(f"{self.base_url}/contents/{content_id}/save", headers=headers, timeout=10)
+                                if response.status_code == 200:
+                                    data = response.json()
+                                    if data.get("message") == "Content saved" and data.get("saved") == True:
+                                        self.log_test("Re-save Content", True, "Content re-saved successfully (toggle working)")
+                                        success_count += 1
+                                    else:
+                                        self.log_test("Re-save Content", False, f"Unexpected response: {data}")
+                                else:
+                                    self.log_test("Re-save Content", False, f"Status: {response.status_code}")
+                            else:
+                                self.log_test("Unsave Content", False, f"Unexpected response: {data}")
+                        else:
+                            self.log_test("Unsave Content", False, f"Status: {response.status_code}")
+                    else:
+                        self.log_test("Save Content", False, f"Unexpected response: {data}")
+                else:
+                    self.log_test("Save Content", False, f"Status: {response.status_code}, Response: {response.text}")
+            except Exception as e:
+                self.log_test("Save Content", False, f"Exception: {str(e)}")
+        
+        return success_count >= 2
+    
+    def test_save_nonexistent_content(self):
+        """Test saving non-existent content"""
+        print("\n=== Testing Save Non-existent Content ===")
+        
+        if "listener" not in self.tokens:
+            self.log_test("Save Non-existent Content", False, "No listener token available")
+            return False
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.tokens['listener']}"}
+            fake_content_id = "507f1f77bcf86cd799439011"  # Valid ObjectId format but non-existent
+            
+            response = requests.post(f"{self.base_url}/contents/{fake_content_id}/save", headers=headers, timeout=10)
+            
+            if response.status_code == 404:
+                self.log_test("Save Non-existent Content", True, "Correctly returned 404 for non-existent content")
+                return True
+            else:
+                self.log_test("Save Non-existent Content", False, f"Expected 404, got {response.status_code}")
+        except Exception as e:
+            self.log_test("Save Non-existent Content", False, f"Exception: {str(e)}")
+        return False
+    
+    def test_save_unauthorized(self):
+        """Test save content without authentication"""
+        print("\n=== Testing Save Content Unauthorized ===")
+        
+        if not self.contents:
+            self.log_test("Save Unauthorized", False, "No content available to test")
+            return False
+        
+        content_id = self.contents[0]
+        
+        try:
+            # Test without Authorization header
+            response = requests.post(f"{self.base_url}/contents/{content_id}/save", timeout=10)
+            
+            if response.status_code in [401, 403]:  # FastAPI HTTPBearer can return either
+                self.log_test("Save Unauthorized", True, f"Correctly rejected unauthorized save (status: {response.status_code})")
+                return True
+            else:
+                self.log_test("Save Unauthorized", False, f"Expected 401/403, got {response.status_code}")
+        except Exception as e:
+            self.log_test("Save Unauthorized", False, f"Exception: {str(e)}")
+        return False
+    
+    def test_get_saved_contents(self):
+        """Test retrieving saved contents"""
+        print("\n=== Testing Get Saved Contents ===")
+        
+        if "listener" not in self.tokens:
+            self.log_test("Get Saved Contents", False, "No listener token available")
+            return False
+        
+        success_count = 0
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.tokens['listener']}"}
+            
+            # Test basic retrieval
+            response = requests.get(f"{self.base_url}/saved-contents", headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                saved_contents = response.json()
+                if isinstance(saved_contents, list):
+                    self.log_test("Get Saved Contents", True, f"Retrieved {len(saved_contents)} saved contents")
+                    success_count += 1
+                    
+                    # Verify content structure if any items exist
+                    if saved_contents:
+                        content = saved_contents[0]
+                        required_fields = ["id", "user_id", "title", "content_type", "created_at"]
+                        missing_fields = [field for field in required_fields if field not in content]
+                        
+                        if not missing_fields:
+                            self.log_test("Saved Content Structure", True, "Saved content structure is correct")
+                            success_count += 1
+                        else:
+                            self.log_test("Saved Content Structure", False, f"Missing fields: {missing_fields}")
+                else:
+                    self.log_test("Get Saved Contents", False, f"Expected list, got: {type(saved_contents)}")
+            else:
+                self.log_test("Get Saved Contents", False, f"Status: {response.status_code}, Response: {response.text}")
+            
+            # Test pagination
+            response = requests.get(f"{self.base_url}/saved-contents?skip=0&limit=5", headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                self.log_test("Saved Contents Pagination", True, "Pagination parameters accepted")
+                success_count += 1
+            else:
+                self.log_test("Saved Contents Pagination", False, f"Pagination failed: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Get Saved Contents", False, f"Exception: {str(e)}")
+        
+        return success_count >= 1
+    
+    def test_get_saved_contents_unauthorized(self):
+        """Test getting saved contents without authentication"""
+        print("\n=== Testing Get Saved Contents Unauthorized ===")
+        
+        try:
+            response = requests.get(f"{self.base_url}/saved-contents", timeout=10)
+            
+            if response.status_code in [401, 403]:
+                self.log_test("Get Saved Contents Unauthorized", True, f"Correctly rejected unauthorized access (status: {response.status_code})")
+                return True
+            else:
+                self.log_test("Get Saved Contents Unauthorized", False, f"Expected 401/403, got {response.status_code}")
+        except Exception as e:
+            self.log_test("Get Saved Contents Unauthorized", False, f"Exception: {str(e)}")
+        return False
+    
+    def test_save_with_different_roles(self):
+        """Test save functionality with different user roles"""
+        print("\n=== Testing Save with Different User Roles ===")
+        
+        if not self.contents:
+            self.log_test("Save Different Roles", False, "No content available to test")
+            return False
+        
+        content_id = self.contents[0]
+        success_count = 0
+        
+        # Test with each user role
+        for role in ["listener", "creator", "expert", "label"]:
+            if role not in self.tokens:
+                continue
+                
+            try:
+                headers = {"Authorization": f"Bearer {self.tokens[role]}"}
+                response = requests.post(f"{self.base_url}/contents/{content_id}/save", headers=headers, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if "saved" in data and "message" in data:
+                        self.log_test(f"Save as {role}", True, f"{role.capitalize()} can save content")
+                        success_count += 1
+                    else:
+                        self.log_test(f"Save as {role}", False, f"Unexpected response: {data}")
+                else:
+                    self.log_test(f"Save as {role}", False, f"Status: {response.status_code}")
+                    
+            except Exception as e:
+                self.log_test(f"Save as {role}", False, f"Exception: {str(e)}")
+        
+        return success_count > 0
+
     def test_missing_fields(self):
         """Test API endpoints with missing required fields"""
         print("\n=== Testing Missing Fields ===")
