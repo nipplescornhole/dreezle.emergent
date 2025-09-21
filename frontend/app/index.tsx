@@ -24,6 +24,8 @@ const { width, height } = Dimensions.get('window');
 export default function WelcomeScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     checkAuthStatus();
