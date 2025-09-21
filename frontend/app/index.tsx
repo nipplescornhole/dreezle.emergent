@@ -162,11 +162,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ff6b9d',
-  },
   gradient: {
     flex: 1,
   },
@@ -180,22 +175,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-  },
-  logoGradient: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  logoText: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: 'white',
+    marginBottom: 12,
   },
   tagline: {
     fontSize: 16,
