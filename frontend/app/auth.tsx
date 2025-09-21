@@ -16,6 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserBadge from '../components/UserBadge';
 
 const { width } = Dimensions.get('window');
 const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
@@ -39,10 +40,30 @@ export default function AuthScreen() {
   });
 
   const roles = [
-    { value: 'listener', label: 'Listener', icon: 'headset' },
-    { value: 'creator', label: 'Creator', icon: 'mic' },
-    { value: 'expert', label: 'Expert', icon: 'star' },
-    { value: 'label', label: 'Label', icon: 'business' },
+    { 
+      value: 'listener', 
+      label: 'Listener', 
+      icon: 'headset',
+      description: 'Ascolta, metti like, commenta e salva contenuti'
+    },
+    { 
+      value: 'creator', 
+      label: 'Creator', 
+      icon: 'mic',
+      description: 'Pubblica contenuti, interagisce e costruisce il tuo pubblico'
+    },
+    { 
+      value: 'expert', 
+      label: 'Expert', 
+      icon: 'star',
+      description: 'Come Listener + verifica con documenti di studi musicali'
+    },
+    { 
+      value: 'label', 
+      label: 'Label', 
+      icon: 'business',
+      description: 'Etichetta discografica verificata dall\'admin'
+    },
   ];
 
   const handleAuth = async () => {
@@ -81,11 +102,17 @@ export default function AuthScreen() {
 
       if (response.ok) {
         await AsyncStorage.setItem('access_token', data.access_token);
-        Alert.alert(
-          'Success',
-          isLogin ? 'Welcome back!' : 'Account created successfully!',
-          [{ text: 'OK', onPress: () => router.replace('/feed') }]
-        );
+        
+        let successMessage = isLogin ? 'Welcome back!' : 'Account created successfully!';
+        if (!isLogin && formData.role === 'expert') {
+          successMessage += '\nPuoi caricare i documenti di studio più tardi dal profilo.';
+        } else if (!isLogin && formData.role === 'label') {
+          successMessage += '\nIl tuo account sarà verificato dall\'admin.';
+        }
+        
+        Alert.alert('Success', successMessage, [
+          { text: 'OK', onPress: () => router.replace('/feed') }
+        ]);
       } else {
         Alert.alert('Error', data.detail || 'Authentication failed');
       }
