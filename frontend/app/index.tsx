@@ -166,27 +166,6 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  languageSelector: {
-    position: 'absolute',
-    top: 60,
-    right: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    zIndex: 10,
-    gap: 6,
-  },
-  languageIcon: {
-    marginRight: 4,
-  },
-  languageText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: '500',
-  },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
@@ -293,72 +272,5 @@ const styles = StyleSheet.create({
   socialIcons: {
     flexDirection: 'row',
     gap: 20,
-  },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 20,
-    width: width * 0.85,
-    maxHeight: height * 0.7,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  modalCloseButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  languagesList: {
-    padding: 20,
-  },
-  languageOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  languageOptionSelected: {
-    backgroundColor: 'rgba(255, 107, 157, 0.15)',
-    borderWidth: 1,
-    borderColor: '#ff6b9d',
-  },
-  languageFlag: {
-    fontSize: 20,
-    marginRight: 12,
-  },
-  languageOptionText: {
-    flex: 1,
-    fontSize: 16,
-    color: 'white',
-    fontWeight: '500',
-  },
-  languageOptionTextSelected: {
-    color: '#ff6b9d',
-    fontWeight: '600',
   },
 });
