@@ -90,6 +90,9 @@ export default function AuthScreen() {
             role: formData.role,
           };
 
+      console.log('Making request to:', `${EXPO_PUBLIC_BACKEND_URL}${endpoint}`);
+      console.log('Request body:', body);
+
       const response = await fetch(`${EXPO_PUBLIC_BACKEND_URL}${endpoint}`, {
         method: 'POST',
         headers: {
@@ -98,14 +101,22 @@ export default function AuthScreen() {
         body: JSON.stringify(body),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok) {
+        console.log('Login successful, saving token and navigating...');
         await AsyncStorage.setItem('access_token', data.access_token);
         
         // Direct navigation for better UX, bypassing alerts
+        console.log('Attempting navigation to /feed');
         router.replace('/feed');
+        console.log('Navigation command sent');
       } else {
+        console.log('Login failed:', data);
         Alert.alert('Error', data.detail || 'Authentication failed');
       }
     } catch (error) {
