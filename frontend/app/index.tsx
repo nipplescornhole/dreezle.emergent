@@ -118,29 +118,25 @@ export default function WelcomeScreen() {
           <View style={styles.actionSection}>
             <TouchableOpacity
               style={[styles.actionButton, styles.loginButton]}
-              onPress={() => isLoggedIn ? router.push('/feed') : navigateToAuth('login')}
+              onPress={() => navigateToAuth('login')}
               activeOpacity={0.8}
             >
               <LinearGradient
                 colors={['#ff6b9d', '#c770f0']}
                 style={styles.buttonGradient}
               >
-                <Text style={styles.buttonText}>
-                  {isLoggedIn ? t('welcome.continue') : t('welcome.signin')}
-                </Text>
+                <Text style={styles.buttonText}>{t('welcome.signin')}</Text>
                 <Ionicons name="arrow-forward" size={20} color="white" />
               </LinearGradient>
             </TouchableOpacity>
 
-            {!isLoggedIn && (
-              <TouchableOpacity
-                style={[styles.actionButton, styles.registerButton]}
-                onPress={() => navigateToAuth('register')}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.registerButtonText}>{t('welcome.signup')}</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={[styles.actionButton, styles.registerButton]}
+              onPress={() => navigateToAuth('register')}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.registerButtonText}>{t('welcome.signup')}</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.guestButton}
