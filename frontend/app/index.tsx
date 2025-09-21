@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DrezzleLogo from '../components/DrezzleLogo';
 
 const { width, height } = Dimensions.get('window');
 
@@ -48,7 +49,7 @@ export default function WelcomeScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Drezzle</Text>
+        <DrezzleLogo size="large" />
       </View>
     );
   }
@@ -68,13 +69,7 @@ export default function WelcomeScreen() {
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <LinearGradient
-                colors={['#ff6b9d', '#c770f0']}
-                style={styles.logoGradient}
-              >
-                <Ionicons name="musical-notes" size={32} color="white" />
-              </LinearGradient>
-              <Text style={styles.logoText}>Drezzle</Text>
+              <DrezzleLogo size="large" />
             </View>
             <Text style={styles.tagline}>Social Music Platform</Text>
           </View>
