@@ -379,6 +379,17 @@ const styles = StyleSheet.create({
   roleHeader: {
     alignItems: 'flex-start',
     marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  roleText: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  roleTextSelected: {
+    color: '#ff6b9d',
   },
   roleDescription: {
     fontSize: 12,
