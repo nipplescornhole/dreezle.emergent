@@ -103,16 +103,8 @@ export default function AuthScreen() {
       if (response.ok) {
         await AsyncStorage.setItem('access_token', data.access_token);
         
-        let successMessage = isLogin ? 'Welcome back!' : 'Account created successfully!';
-        if (!isLogin && formData.role === 'expert') {
-          successMessage += '\nPuoi caricare i documenti di studio più tardi dal profilo.';
-        } else if (!isLogin && formData.role === 'label') {
-          successMessage += '\nIl tuo account sarà verificato dall\'admin.';
-        }
-        
-        Alert.alert('Success', successMessage, [
-          { text: 'OK', onPress: () => router.replace('/feed') }
-        ]);
+        // Direct navigation for better UX, bypassing alerts
+        router.replace('/feed');
       } else {
         Alert.alert('Error', data.detail || 'Authentication failed');
       }
