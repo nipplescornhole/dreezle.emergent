@@ -224,10 +224,24 @@ async def register(user_data: UserCreate):
     
     # Determine verified role based on registration choice
     verified_role = user_data.role
+    badge_status = "approved"
+    is_verified = True
+    
     if user_data.role == "expert":
         verified_role = "listener"  # Expert must verify with documents
+        badge_status = "pending"
+        is_verified = False
     elif user_data.role == "label":
         verified_role = "label"  # Label starts as label but needs admin approval
+        badge_status = "pending"
+        is_verified = False
+    elif user_data.role == "admin":
+        # Only allow specific admin email
+        if user_data.email != "fabio@drezzle.com":
+            raise HTTPException(status_code=403, detail="Admin registration not allowed")
+        verified_role = "admin"
+        badge_status = "approved"
+        is_verified = True
     
     # Create user
     user_dict = {
@@ -236,8 +250,8 @@ async def register(user_data: UserCreate):
         "password": hashed_password,
         "role": user_data.role,  # Desired role
         "verified_role": verified_role,  # Actual active role
-        "is_verified": user_data.role in ["listener", "creator"],  # These don't need verification
-        "badge_status": "approved" if user_data.role in ["listener", "creator"] else "pending",
+        "is_verified": is_verified,
+        "badge_status": badge_status,
         "created_at": datetime.utcnow()
     }
     
@@ -248,6 +262,31 @@ async def register(user_data: UserCreate):
     access_token = create_access_token(data={"sub": user_id})
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+@api_router.post("/auth/create-admin")
+async def create_admin_account():
+    """Special endpoint to create the admin account"""
+    # Check if admin already exists
+    existing_admin = await db.users.find_one({"email": "fabio@drezzle.com"})
+    if existing_admin:
+        return {"message": "Admin account already exists"}
+    
+    # Create admin account
+    hashed_password = hash_password("1234")
+    
+    admin_dict = {
+        "email": "fabio@drezzle.com",
+        "username": "admin_fabio",
+        "password": hashed_password,
+        "role": "admin",
+        "verified_role": "admin",
+        "is_verified": True,
+        "badge_status": "approved",
+        "created_at": datetime.utcnow()
+    }
+    
+    result = await db.users.insert_one(admin_dict)
+    return {"message": "Admin account created successfully", "admin_id": str(result.inserted_id)}
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(user_data: UserLogin):
