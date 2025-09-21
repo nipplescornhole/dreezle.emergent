@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack.Screen name="feed" />
         <Stack.Screen name="upload" />
         <Stack.Screen name="profile" />
+        <Stack.Screen name="saved" />
         <Stack.Screen name="comments" />
         <Stack.Screen name="admin" />
       </Stack>
