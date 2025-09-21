@@ -23,6 +23,7 @@ interface Comment {
   content_id: string;
   user_id: string;
   username: string;
+  user_role?: string;
   text: string;
   created_at: string;
 }
@@ -33,6 +34,46 @@ export default function CommentsScreen() {
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState('');
   const [posting, setPosting] = useState(false);
+
+  // Helper function for role badge
+  const getBadgeConfig = (role: string) => {
+    switch (role?.toLowerCase()) {
+      case 'listener':
+        return { color: '#6b7280', backgroundColor: 'rgba(107, 114, 128, 0.15)', icon: 'headset', label: 'Listener' };
+      case 'creator':
+        return { color: '#ff6b9d', backgroundColor: 'rgba(255, 107, 157, 0.15)', icon: 'mic', label: 'Creator' };
+      case 'expert':
+        return { color: '#45d4aa', backgroundColor: 'rgba(69, 212, 170, 0.15)', icon: 'star', label: 'Expert' };
+      case 'label':
+        return { color: '#c770f0', backgroundColor: 'rgba(199, 112, 240, 0.15)', icon: 'business', label: 'Label' };
+      default:
+        return { color: '#6b7280', backgroundColor: 'rgba(107, 114, 128, 0.15)', icon: 'person', label: 'User' };
+    }
+  };
+
+  const renderBadge = (role: string, size: 'small' | 'medium' = 'small') => {
+    const config = getBadgeConfig(role);
+    const sizeConfig = size === 'small' 
+      ? { paddingHorizontal: 4, paddingVertical: 1, fontSize: 9, iconSize: 10 }
+      : { paddingHorizontal: 6, paddingVertical: 2, fontSize: 10, iconSize: 12 };
+
+    return (
+      <View style={[
+        styles.badge,
+        {
+          backgroundColor: config.backgroundColor,
+          borderColor: config.color,
+          paddingHorizontal: sizeConfig.paddingHorizontal,
+          paddingVertical: sizeConfig.paddingVertical,
+        }
+      ]}>
+        <Ionicons name={config.icon as any} size={sizeConfig.iconSize} color={config.color} style={styles.badgeIcon} />
+        <Text style={[styles.badgeText, { color: config.color, fontSize: sizeConfig.fontSize }]}>
+          {config.label}
+        </Text>
+      </View>
+    );
+  };
 
   useEffect(() => {
     if (contentId) {
