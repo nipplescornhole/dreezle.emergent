@@ -12,15 +12,15 @@ export default function DrezzleLogo({ size = 'medium', style }: DrezzleLogoProps
   const getSize = () => {
     switch (size) {
       case 'small':
-        return { width: 140, height: 56 };
+        return { width: 200, height: 80 };  // Test più grande
       case 'medium':
-        return { width: 210, height: 84 };
+        return { width: 250, height: 100 };
       case 'large':
-        return { width: 308, height: 123 };
+        return { width: 350, height: 140 };  // Test molto più grande
       case 'splash':
-        return { width: 420, height: 168 };
+        return { width: 400, height: 160 };
       default:
-        return { width: 210, height: 84 };
+        return { width: 250, height: 100 };
     }
   };
 
