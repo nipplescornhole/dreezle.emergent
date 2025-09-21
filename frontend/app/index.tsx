@@ -160,6 +160,62 @@ export default function WelcomeScreen() {
           </View>
         </ScrollView>
       </LinearGradient>
+
+      {/* Language Selection Modal */}
+      <Modal
+        visible={showLanguageModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{t('welcome.language')}</Text>
+              <TouchableOpacity
+                onPress={() => setShowLanguageModal(false)}
+                style={styles.closeButton}
+              >
+                <Ionicons name="close" size={24} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.languageOptions}>
+              {[
+                { code: 'it' as Language, name: t('language.italian'), flag: '🇮🇹' },
+                { code: 'es' as Language, name: t('language.spanish'), flag: '🇪🇸' },
+                { code: 'de' as Language, name: t('language.german'), flag: '🇩🇪' },
+                { code: 'en' as Language, name: t('language.english'), flag: '🇬🇧' },
+                { code: 'en-US' as Language, name: t('language.american'), flag: '🇺🇸' },
+              ].map((lang) => (
+                <TouchableOpacity
+                  key={lang.code}
+                  style={[
+                    styles.languageOption,
+                    language === lang.code && styles.selectedLanguageOption,
+                  ]}
+                  onPress={() => {
+                    setLanguage(lang.code);
+                    setShowLanguageModal(false);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.languageFlag}>{lang.flag}</Text>
+                  <Text style={[
+                    styles.languageName,
+                    language === lang.code && styles.selectedLanguageName,
+                  ]}>
+                    {lang.name}
+                  </Text>
+                  {language === lang.code && (
+                    <Ionicons name="checkmark" size={20} color="#ff6b9d" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
