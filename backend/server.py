@@ -50,7 +50,7 @@ class UserCreate(BaseModel):
     email: str
     password: str
     username: str
-    role: str = "listener"  # listener, creator, expert, label
+    role: str = "listener"  # listener, creator, expert, label, admin
 
 class UserLogin(BaseModel):
     email: str
@@ -66,6 +66,30 @@ class User(BaseModel):
     badge_status: Optional[str] = None  # pending, approved, rejected
     verification_documents: Optional[str] = None  # Base64 dei documenti per expert
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class AdminStats(BaseModel):
+    total_users: int
+    total_contents: int
+    pending_expert_requests: int
+    pending_label_requests: int
+    users_by_role: dict
+    recent_registrations: int
+
+class AdminUserDetails(BaseModel):
+    id: str
+    email: str
+    username: str
+    role: str
+    verified_role: str
+    is_verified: bool
+    badge_status: Optional[str]
+    created_at: datetime
+    content_count: int
+    last_active: Optional[datetime] = None
+
+class VerificationDecision(BaseModel):
+    decision: str  # "approve" or "reject"
+    reason: Optional[str] = None
 
 class VerificationRequest(BaseModel):
     documents: str  # Base64 encoded documents
