@@ -242,16 +242,13 @@ export default function ProfileScreen() {
             <Text style={styles.email}>{user.email}</Text>
 
             <View style={styles.roleContainer}>
-              <Ionicons
-                name={getRoleIcon(user.role) as any}
-                size={16}
-                color={getRoleColor(user.role)}
+              <UserBadge 
+                role={user.role} 
+                verifiedRole={user.is_verified ? user.role : undefined}
+                size="medium"
               />
-              <Text style={[styles.roleText, { color: getRoleColor(user.role) }]}>
-                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-              </Text>
               {user.is_verified && (
-                <Ionicons name="checkmark-circle" size={16} color="#45d4aa" />
+                <Ionicons name="checkmark-circle" size={16} color="#45d4aa" style={{ marginLeft: 8 }} />
               )}
             </View>
 
