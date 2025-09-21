@@ -31,7 +31,7 @@
     "expo-media-library": "^18.2.0",
     "expo-permissions": "^14.4.0",
     "expo-router": "~5.1.4",
-    "expo-splash-screen": "~0.30.10",
+    "expo-splash-screen": "^31.0.10",
     "expo-status-bar": "~2.2.3",
     "expo-symbols": "~0.4.5",
     "expo-system-ui": "~5.0.10",
