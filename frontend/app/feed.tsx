@@ -498,6 +498,30 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 4,
   },
+  creatorInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 8,
+  },
+  creatorName: {
+    fontSize: 14,
+    color: 'white',
+    fontWeight: '600',
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  badgeIcon: {
+    marginRight: 4,
+  },
+  badgeText: {
+    fontWeight: '600',
+  },
   contentTitle: {
     fontSize: 20,
     fontWeight: 'bold',
