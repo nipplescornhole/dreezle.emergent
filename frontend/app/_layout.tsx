@@ -43,15 +43,17 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="auth" />
-      <Stack.Screen name="feed" />
-      <Stack.Screen name="upload" />
-      <Stack.Screen name="profile" />
-      <Stack.Screen name="comments" />
-      <Stack.Screen name="admin" />
-    </Stack>
+    <LanguageProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="auth" />
+        <Stack.Screen name="feed" />
+        <Stack.Screen name="upload" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="comments" />
+        <Stack.Screen name="admin" />
+      </Stack>
+    </LanguageProvider>
   );
 }
 
