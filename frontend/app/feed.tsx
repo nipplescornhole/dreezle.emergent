@@ -24,6 +24,8 @@ const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 interface Content {
   id: string;
   user_id: string;
+  username?: string;
+  user_role?: string;
   title: string;
   description?: string;
   content_type: string;
