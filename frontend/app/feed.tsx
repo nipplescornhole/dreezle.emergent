@@ -412,11 +412,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-  },
   contentContainer: {
     width,
     height: height - 100,
